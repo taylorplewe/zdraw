@@ -1,52 +1,49 @@
 const std = @import("std");
-const MouseButton = @import("shared.zig").MouseButton;
+const shared = @import("shared.zig");
 const Self = @This();
-
-const Matrix = []u8;
-const Pixel = packed struct {
-    a: u8,
-    b: u8,
-    g: u8,
-    r: u8,
-};
-const PixelMatrix = struct {
-    pixels: []Pixel,
-    width: isize,
-    height: isize,
-
-    fn setPixel(self: *PixelMatrix, x: isize, y: isize, color: u32) void {
-        const index = ((y * self.width) + x);
-        if (index < 0 or index >= self.width * self.height) return;
-
-        self.pixels[index].r = @intCast(color & 0xff);
-        self.pixels[index].g = @intCast((color >> 8) & 0xff);
-        self.pixels[index].b = @intCast((color >> 16) & 0xff);
-        self.pixels[index].a = 0xff;
-    }
-};
-const Point = struct {
-    x: isize,
-    y: isize,
-};
-const PointF = struct {
-    x: f64,
-    y: f64,
-};
 
 const COL_FG = 0xff000000;
 const COL_BG = 0xffffffff;
 const PENCIL_MAX_RADIUS = 28;
 const PENCIL_MIN_RADIUS = 0;
 
+const PixelMatrix = struct {
+    pixels: [*]shared.Pixel,
+    width: isize,
+    height: isize,
+
+    fn setPixel(self: *PixelMatrix, x: isize, y: isize, color: u32) void {
+        const index = (y * self.width) + x;
+        if (index < 0 or index >= self.width * self.height) return;
+
+        self.pixels[index].r = @intCast(color & 0xff);
+        self.pixels[index].g = @intCast((color >> 8) & 0xff);
+        self.pixels[index].b = @intCast((color >> 16) & 0xff);
+    }
+
+    fn fillCircle(self: *PixelMatrix, x: isize, y: isize, r: isize, color: u32) void {
+        for (0..(r * 2 + 1)) |w| {
+            for (0..(r * 2 + 1)) |h| {
+                const dx: isize = r - @as(isize, @intCast(w));
+                const dy: isize = r - @as(isize, @intCast(h));
+                const offset_x: isize = @mod((dx + x), self.width);
+                const offset_y: isize = dy + y;
+                if (((dx * dx) + (dy * dy) >= r * r) or (dx + x < 0) or (offset_y < 0) or ((dx + x) >= self.width)) continue;
+
+                self.setPixel(offset_x, offset_y, color);
+            }
+        }
+    }
+};
+
 // comes from parent
 allocator: std.mem.Allocator,
 width: isize,
 height: isize,
 
-drawn_pixels: Matrix,
 pencil_radius: usize,
-curr_mouse_point: PointF,
-last_mouse_point: PointF,
+curr_mouse_point: shared.PointF,
+last_mouse_point: shared.PointF,
 
 pub fn new(width: isize, height: isize, allocator: std.mem.Allocator) Self {
     return Self{
