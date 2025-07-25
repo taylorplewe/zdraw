@@ -1,6 +1,4 @@
 pub const SCALE = 5;
-pub const SCREEN_WIDTH = 128;
-pub const SCREEN_HEIGHT = SCREEN_WIDTH;
 pub const BPP = 32;
 pub const BPP8 = BPP / 8;
 
