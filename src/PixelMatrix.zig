@@ -1,5 +1,7 @@
 const std = @import("std");
 const shared = @import("shared.zig");
+const min = shared.min;
+const max = shared.max;
 const Self = @This();
 
 pixels: []shared.Pixel,
@@ -94,11 +96,4 @@ pub fn fillSegment(self: *Self, p1: shared.PointF, p2: shared.PointF, r: isize, 
     }
 
     // last_mouse_point = curr_mouse_point;
-}
-
-fn min(a: anytype, b: @TypeOf(a)) @TypeOf(a) {
-    return if (a < b) a else b;
-}
-fn max(a: anytype, b: @TypeOf(a)) @TypeOf(a) {
-    return if (a > b) a else b;
 }

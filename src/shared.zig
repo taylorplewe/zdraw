@@ -21,3 +21,10 @@ pub const PointF = struct {
     x: f64,
     y: f64,
 };
+
+pub fn min(a: anytype, b: @TypeOf(a)) @TypeOf(a) {
+    return if (a < b) a else b;
+}
+pub fn max(a: anytype, b: @TypeOf(a)) @TypeOf(a) {
+    return if (a > b) a else b;
+}
