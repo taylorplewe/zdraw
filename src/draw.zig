@@ -18,24 +18,36 @@ pub const PENCIL_MAX_RADIUS = 28;
 pub const PENCIL_MIN_RADIUS = 0;
 
 pub var drawn_pixels: *PixelMatrix = undefined;
+pub var overlay_pixels: *PixelMatrix = undefined;
+
 var mouse_button_down: shared.MouseButton = .None;
 var cursor_pos: shared.PointF = undefined;
 var last_cursor_pos: ?shared.PointF = null;
 pub var pencil_radius: usize = undefined;
 
 pub fn init(allocator: std.mem.Allocator, width: isize, height: isize) !void {
-    const pixel_buf = try allocator.alloc(shared.Pixel, @intCast(width * height));
+    const drawn_pixel_buf = try allocator.alloc(shared.Pixel, @intCast(width * height));
     drawn_pixels = try allocator.create(PixelMatrix);
     drawn_pixels.* = PixelMatrix{
-        .pixels = pixel_buf,
+        .pixels = drawn_pixel_buf,
+        .width = width,
+        .height = height,
+    };
+
+    const overlay_pixel_buf = try allocator.alloc(shared.Pixel, @intCast(width * height));
+    overlay_pixels = try allocator.create(PixelMatrix);
+    overlay_pixels.* = PixelMatrix{
+        .pixels = overlay_pixel_buf,
         .width = width,
         .height = height,
     };
 
     @memset(drawn_pixels.pixels, BG_PIXEL);
+
     pencil_radius = (PENCIL_MAX_RADIUS - PENCIL_MIN_RADIUS) / 2;
 }
 
+/// Updates the state of the underlying pixels based on input events.
 pub fn update(event: input_events.InputEvent) void {
     switch (event) {
         .MouseButtonEvent => mouse_button_down = event.MouseButtonEvent.button,
@@ -61,4 +73,13 @@ pub fn update(event: input_events.InputEvent) void {
     } else {
         last_cursor_pos = null;
     }
+
+    // draw cursor on overlay layer
+    @memset(overlay_pixels.pixels, shared.Pixel{
+        .a = 0,
+        .b = 0,
+        .g = 0,
+        .r = 0,
+    }); // transparent
+    overlay_pixels.fillCircle(@intFromFloat(cursor_pos.x), @intFromFloat(cursor_pos.y), @as(isize, @intCast(pencil_radius)), 0x888888);
 }

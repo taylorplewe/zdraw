@@ -8,6 +8,7 @@ var window: *c.SDL_Window = undefined;
 var renderer: *c.SDL_Renderer = undefined;
 var surface: *c.SDL_Surface = undefined;
 
+/// Allocate and initialize SDL resources.
 pub fn init(width: usize, height: usize) void {
     _ = c.SDL_Init(c.SDL_INIT_VIDEO);
 
@@ -21,6 +22,7 @@ pub fn init(width: usize, height: usize) void {
     _ = c.SDL_HideCursor();
 }
 
+/// Poll for input events and return the first one, or null if no events are available.
 pub fn getInput() ?input_events.InputEvent {
     var e: c.SDL_Event = undefined;
     while (c.SDL_PollEvent(&e)) {
@@ -49,13 +51,6 @@ pub fn getInput() ?input_events.InputEvent {
             c.SDL_EVENT_MOUSE_WHEEL => return input_events.InputEvent{ .MouseWheelEvent = .{
                 .delta = e.wheel.y,
             } },
-            // c.SDL_EVENT_MOUSE_WHEEL => {
-            //     if (e.wheel.y < 0) {
-            //         draw.pencil_radius = min(draw.pencil_radius + 1, draw.PENCIL_MAX_RADIUS);
-            //     } else if (e.wheel.y > 0) {
-            //         draw.pencil_radius = max(if (draw.pencil_radius > 0) draw.pencil_radius - 1 else 0, draw.PENCIL_MIN_RADIUS);
-            //     }
-            // },
             else => {},
         }
     }
@@ -63,27 +58,30 @@ pub fn getInput() ?input_events.InputEvent {
     return null;
 }
 
-pub fn render(drawn_pixels: []shared.Pixel) void {
+/// Render the given pixel layers to the screen.
+pub fn render(pixel_layers: [][]shared.Pixel) void {
     _ = c.SDL_RenderClear(renderer);
 
-    if (c.SDL_MUSTLOCK(surface)) {
-        _ = c.SDL_LockSurface(surface);
+    for (pixel_layers) |layer| {
+        if (c.SDL_MUSTLOCK(surface)) {
+            _ = c.SDL_LockSurface(surface);
+        }
+
+        // draw all layer pixels to the surface
+        const pixels: [*]u8 = @ptrCast(surface.*.pixels.?);
+        @memcpy(pixels, @as([]u8, @ptrCast(layer)));
+
+        if (c.SDL_MUSTLOCK(surface)) {
+            _ = c.SDL_UnlockSurface(surface);
+        }
+
+        const scaled_surface = c.SDL_ScaleSurface(surface, surface.w * shared.SCALE, surface.h * shared.SCALE, c.SDL_SCALEMODE_NEAREST);
+
+        const tex = c.SDL_CreateTextureFromSurface(renderer, scaled_surface);
+        defer c.SDL_DestroyTexture(tex);
+
+        _ = c.SDL_RenderTexture(renderer, tex, null, null);
     }
-
-    // draw all drawn pixels to the surface
-    const pixels: [*]u8 = @ptrCast(surface.*.pixels.?);
-    @memcpy(pixels, @as([]u8, @ptrCast(drawn_pixels)));
-
-    if (c.SDL_MUSTLOCK(surface)) {
-        _ = c.SDL_UnlockSurface(surface);
-    }
-
-    const scaled_surface = c.SDL_ScaleSurface(surface, surface.w * shared.SCALE, surface.h * shared.SCALE, c.SDL_SCALEMODE_NEAREST);
-
-    const tex = c.SDL_CreateTextureFromSurface(renderer, scaled_surface);
-    defer c.SDL_DestroyTexture(tex);
-
-    _ = c.SDL_RenderTexture(renderer, tex, null, null);
     _ = c.SDL_RenderPresent(renderer);
 }
 

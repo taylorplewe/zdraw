@@ -8,6 +8,7 @@ pixels: []shared.Pixel,
 width: isize,
 height: isize,
 
+/// Set a certain pixel at the given coordinates to the given color.
 fn setPixel(self: *Self, x: isize, y: isize, color: u32) void {
     const index = (y * self.width) + x;
     if (index < 0 or index >= self.width * self.height) return;
@@ -15,6 +16,7 @@ fn setPixel(self: *Self, x: isize, y: isize, color: u32) void {
     self.pixels[@intCast(index)].r = @intCast(color & 0xff);
     self.pixels[@intCast(index)].g = @intCast((color >> 8) & 0xff);
     self.pixels[@intCast(index)].b = @intCast((color >> 16) & 0xff);
+    self.pixels[@intCast(index)].a = 0xff;
 }
 
 pub fn fillCircle(self: *Self, x: isize, y: isize, r: isize, color: u32) void {
@@ -32,8 +34,6 @@ pub fn fillCircle(self: *Self, x: isize, y: isize, r: isize, color: u32) void {
 }
 
 pub fn fillSegment(self: *Self, p1: shared.PointF, p2: shared.PointF, r: isize, color: u32) void {
-    // mouse_button_down = MouseButton.None; // debug
-
     const theta: f64 = std.math.atan2(p2.y - p1.y, p2.x - p1.x);
 
     if (r > 0) {
@@ -94,6 +94,4 @@ pub fn fillSegment(self: *Self, p1: shared.PointF, p2: shared.PointF, r: isize, 
             }
         }
     }
-
-    // last_mouse_point = curr_mouse_point;
 }
