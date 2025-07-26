@@ -15,8 +15,8 @@ pub fn build(b: *std.Build) void {
         .root_module = exe_mod,
     });
 
-    exe.addIncludePath(.{ .cwd_relative = "path/to/sdl/include" });
-    exe.addLibraryPath(.{ .cwd_relative = "path/to/sdl/lib" });
+    exe.addIncludePath(.{ .cwd_relative = "C:\\Users\\TaylorPlewe\\Documents\\SDL3-devel-3.2.18-VC\\SDL3-3.2.18\\include\\" });
+    exe.addLibraryPath(.{ .cwd_relative = "C:\\Users\\TaylorPlewe\\lib" });
     exe.linkSystemLibrary("SDL3");
     exe.linkLibC();
 
