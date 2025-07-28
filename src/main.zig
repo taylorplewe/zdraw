@@ -17,17 +17,11 @@ pub fn main() !void {
 
     while (true) {
         const event = sdl.getInput();
-        if (event == null) continue;
-        if (event.? == .ProgramEvent and event.?.ProgramEvent == input_events.ProgramEvent.Quit)
+        if (event != null and event.? == .ProgramEvent and event.?.ProgramEvent == input_events.ProgramEvent.Quit)
             break;
 
-        draw.update(event.?);
-
-        var layers = [_][]shared.Pixel{
-            draw.drawn_pixels.pixels,
-            draw.overlay_pixels.pixels,
-        };
-        sdl.render(&layers);
+        const pixels = draw.update(event);
+        sdl.render(pixels);
     }
 
     sdl.quit();

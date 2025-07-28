@@ -59,29 +59,28 @@ pub fn getInput() ?input_events.InputEvent {
 }
 
 /// Render the given pixel layers to the screen.
-pub fn render(pixel_layers: [][]shared.Pixel) void {
+pub fn render(pixels_to_render: []shared.Pixel) void {
     _ = c.SDL_RenderClear(renderer);
 
-    for (pixel_layers) |layer| {
-        if (c.SDL_MUSTLOCK(surface)) {
-            _ = c.SDL_LockSurface(surface);
-        }
-
-        // draw all layer pixels to the surface
-        const pixels: [*]u8 = @ptrCast(surface.*.pixels.?);
-        @memcpy(pixels, @as([]u8, @ptrCast(layer)));
-
-        if (c.SDL_MUSTLOCK(surface)) {
-            _ = c.SDL_UnlockSurface(surface);
-        }
-
-        const scaled_surface = c.SDL_ScaleSurface(surface, surface.w * shared.SCALE, surface.h * shared.SCALE, c.SDL_SCALEMODE_NEAREST);
-
-        const tex = c.SDL_CreateTextureFromSurface(renderer, scaled_surface);
-        defer c.SDL_DestroyTexture(tex);
-
-        _ = c.SDL_RenderTexture(renderer, tex, null, null);
+    if (c.SDL_MUSTLOCK(surface)) {
+        _ = c.SDL_LockSurface(surface);
     }
+
+    // draw all layer pixels to the surface
+    const pixels: [*]u8 = @ptrCast(surface.*.pixels.?);
+    @memcpy(pixels, @as([]u8, @ptrCast(pixels_to_render)));
+
+    if (c.SDL_MUSTLOCK(surface)) {
+        _ = c.SDL_UnlockSurface(surface);
+    }
+
+    const scaled_surface = c.SDL_ScaleSurface(surface, surface.w * shared.SCALE, surface.h * shared.SCALE, c.SDL_SCALEMODE_NEAREST);
+
+    const tex = c.SDL_CreateTextureFromSurface(renderer, scaled_surface);
+    defer c.SDL_DestroyTexture(tex);
+
+    _ = c.SDL_RenderTexture(renderer, tex, null, null);
+
     _ = c.SDL_RenderPresent(renderer);
 }
 
