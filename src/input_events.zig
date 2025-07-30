@@ -19,6 +19,8 @@ pub const MouseButtonEvent = struct {
 /// An enum for general program events that are not directly related to user input.
 pub const ProgramEvent = enum {
     Quit,
+    Undo,
+    Redo,
 };
 
 pub const InputEvent = union(enum) {

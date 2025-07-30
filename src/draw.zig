@@ -3,6 +3,7 @@ const shared = @import("shared.zig");
 const min = shared.min;
 const max = shared.max;
 const input_events = @import("input_events.zig");
+const history = @import("history.zig");
 const Layer = @import("Layer.zig");
 const Self = @This();
 
@@ -21,13 +22,14 @@ const PENCIL_MIN_RADIUS = 0;
 var drawn_layer: *Layer = undefined;
 var overlay_layer: *Layer = undefined;
 var combined_pixels: []shared.Pixel = undefined;
+var drawn_pixels_history: history.PixelHistory = undefined;
 
 var mouse_button_down: shared.MouseButton = .None;
 var cursor_pos: shared.PointF = undefined;
 var last_cursor_pos: ?shared.PointF = null;
 pub var pencil_radius: f32 = undefined;
 
-pub fn init(allocator: std.mem.Allocator, width: isize, height: isize) !void {
+pub fn init(allocator: std.mem.Allocator, comptime width: isize, comptime height: isize) !void {
     const pixel_len: usize = @intCast(width * height);
     const drawn_pixel_buf = try allocator.alloc(shared.Pixel, pixel_len);
     drawn_layer = try allocator.create(Layer);
@@ -47,17 +49,23 @@ pub fn init(allocator: std.mem.Allocator, width: isize, height: isize) !void {
 
     @memset(drawn_layer.pixels, BG_PIXEL);
     clearLayer(overlay_layer.pixels);
+    combined_pixels = try allocator.alloc(shared.Pixel, pixel_len);
 
     pencil_radius = (PENCIL_MAX_RADIUS - PENCIL_MIN_RADIUS) / 2;
 
-    combined_pixels = try allocator.alloc(shared.Pixel, pixel_len);
+    drawn_pixels_history = history.PixelHistory.new(allocator, drawn_layer.pixels);
 }
 
 /// Updates the state of the underlying pixels based on input events.
 pub fn update(event: ?input_events.InputEvent) []shared.Pixel {
     if (event != null) {
         switch (event.?) {
-            .MouseButtonEvent => mouse_button_down = event.?.MouseButtonEvent.button,
+            .MouseButtonEvent => {
+                mouse_button_down = event.?.MouseButtonEvent.button;
+                if (mouse_button_down == shared.MouseButton.None) {
+                    drawn_pixels_history.commit(drawn_layer.pixels);
+                }
+            },
             .MouseMotionEvent => cursor_pos = .{
                 .x = event.?.MouseMotionEvent.x,
                 .y = event.?.MouseMotionEvent.y,
@@ -69,7 +77,14 @@ pub fn update(event: ?input_events.InputEvent) []shared.Pixel {
                     pencil_radius = max(if (pencil_radius > 0) pencil_radius - PENCIL_INCREMENT else 0, PENCIL_MIN_RADIUS);
                 }
             },
-            else => {},
+            .ProgramEvent => {
+                // undo
+                if (event.?.ProgramEvent == input_events.ProgramEvent.Undo) {
+                    copyPixelsToDrawnPixels(drawn_pixels_history.undo());
+                } else if (event.?.ProgramEvent == input_events.ProgramEvent.Redo) {
+                    copyPixelsToDrawnPixels(drawn_pixels_history.redo());
+                }
+            },
         }
     }
     if (mouse_button_down != shared.MouseButton.None) {
@@ -116,4 +131,10 @@ inline fn combineLayersIntoPixelMatrix(layers: []*Layer) []shared.Pixel {
     }
 
     return combined_pixels;
+}
+
+inline fn copyPixelsToDrawnPixels(pixels_to_copy: []shared.Pixel) void {
+    for (pixels_to_copy, 0..) |src, i| {
+        drawn_layer.pixels[i] = src;
+    }
 }

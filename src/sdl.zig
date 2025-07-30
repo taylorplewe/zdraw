@@ -8,6 +8,10 @@ var window: *c.SDL_Window = undefined;
 var renderer: *c.SDL_Renderer = undefined;
 var surface: *c.SDL_Surface = undefined;
 
+// These are ints because there's 2 of each and I want to keep track of how many are down; only "false" if the number is 0
+var num_ctrls_down: usize = 0;
+var num_shifts_down: usize = 0;
+
 /// Allocate and initialize SDL resources.
 pub fn init(width: usize, height: usize) void {
     _ = c.SDL_Init(c.SDL_INIT_VIDEO);
@@ -30,6 +34,20 @@ pub fn getInput() ?input_events.InputEvent {
             c.SDL_EVENT_QUIT => return input_events.InputEvent{ .ProgramEvent = input_events.ProgramEvent.Quit },
             c.SDL_EVENT_KEY_DOWN => {
                 if (e.key.scancode == c.SDL_SCANCODE_Q) return input_events.InputEvent{ .ProgramEvent = input_events.ProgramEvent.Quit };
+                if (e.key.scancode == c.SDL_SCANCODE_LCTRL or e.key.scancode == c.SDL_SCANCODE_RCTRL)
+                    num_ctrls_down += 1;
+                if (e.key.scancode == c.SDL_SCANCODE_LSHIFT or e.key.scancode == c.SDL_SCANCODE_RSHIFT)
+                    num_shifts_down += 1;
+                if (e.key.scancode == c.SDL_SCANCODE_Z) {
+                    if (num_ctrls_down == 0) continue;
+                    return input_events.InputEvent{ .ProgramEvent = if (num_shifts_down == 0) input_events.ProgramEvent.Undo else input_events.ProgramEvent.Redo };
+                }
+            },
+            c.SDL_EVENT_KEY_UP => {
+                if (e.key.scancode == c.SDL_SCANCODE_LCTRL or e.key.scancode == c.SDL_SCANCODE_RCTRL)
+                    num_ctrls_down -= 1;
+                if (e.key.scancode == c.SDL_SCANCODE_LSHIFT or e.key.scancode == c.SDL_SCANCODE_RSHIFT)
+                    num_shifts_down -= 1;
             },
             c.SDL_EVENT_MOUSE_MOTION => {
                 return input_events.InputEvent{ .MouseMotionEvent = .{
