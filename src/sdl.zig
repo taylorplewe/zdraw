@@ -93,6 +93,7 @@ pub fn render(pixels_to_render: []shared.Pixel) void {
     }
 
     const scaled_surface = c.SDL_ScaleSurface(surface, surface.w * shared.SCALE, surface.h * shared.SCALE, c.SDL_SCALEMODE_NEAREST);
+    defer c.SDL_DestroySurface(scaled_surface);
 
     const tex = c.SDL_CreateTextureFromSurface(renderer, scaled_surface);
     defer c.SDL_DestroyTexture(tex);
