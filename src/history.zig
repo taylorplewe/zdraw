@@ -1,6 +1,7 @@
 const std = @import("std");
 const shared = @import("shared.zig");
 
+// testing gh auth from tpl
 const MAX_HISTORY = 64;
 
 pub const PixelHistory = struct {
