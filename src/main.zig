@@ -26,3 +26,7 @@ pub fn main() !void {
 
     sdl.quit();
 }
+
+export fn dude() u32 {
+    return 0xea;
+}
