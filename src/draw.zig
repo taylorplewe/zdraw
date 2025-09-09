@@ -101,7 +101,7 @@ pub fn update(event: ?input_events.InputEvent) []shared.Pixel {
     clearLayer(overlay_layer.pixels);
     overlay_layer.fillCircle(@intFromFloat(cursor_pos.x), @intFromFloat(cursor_pos.y), @as(isize, @intFromFloat(pencil_radius)), 0x888888);
 
-    // combine all layers, front to back
+    // combine all layers, back to front
     var layers = [_]*Layer{
         drawn_layer,
         overlay_layer,
