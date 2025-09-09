@@ -44,13 +44,15 @@ pub const PixelHistory = struct {
         }
 
         const new_pixels = self.history.allocator.dupe(shared.Pixel, pixels_to_append) catch {
-            std.debug.print("\x1b[31mERROR\x1b[0m could not allocate memory for history\n", .{});
-            std.process.exit(1);
+            // std.debug.print("\x1b[31mERROR\x1b[0m could not allocate memory for history\n", .{});
+            // std.process.exit(1);
+            unreachable;
         };
 
         self.history.append(new_pixels) catch {
-            std.debug.print("\x1b[31mERROR\x1b[0m could not appendSlice() to history\n", .{});
-            std.process.exit(1);
+            // std.debug.print("\x1b[31mERROR\x1b[0m could not appendSlice() to history\n", .{});
+            // std.process.exit(1);
+            unreachable;
         };
     }
 

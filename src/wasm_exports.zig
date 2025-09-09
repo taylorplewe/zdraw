@@ -6,9 +6,10 @@ const shared = @import("shared.zig");
 const WIDTH = 128;
 const HEIGHT = 128;
 
-var buffer: [1024 * 1024]u8 = undefined; // 1MB buffer
-var fba = std.heap.FixedBufferAllocator.init(&buffer);
-var allocator = fba.allocator();
+// var buffer: [1024 * 1024]u8 = undefined; // 1MB buffer
+// var fba = std.heap.FixedBufferAllocator.init(&buffer);
+// var allocator = fba.allocator();
+var allocator = std.heap.wasm_allocator;
 var pixels_ptr: [*]shared.Pixel = undefined;
 
 export fn init() void {

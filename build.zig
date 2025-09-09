@@ -4,12 +4,14 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const wasm = b.addStaticLibrary(.{
+    const wasm = b.addExecutable(.{
         .name = "zdraw-wasm",
         .root_source_file = .{ .cwd_relative = "src/wasm_exports.zig" },
-        .target = b.resolveTargetQuery(.{ .cpu_arch = .wasm32 }),
+        .target = b.resolveTargetQuery(.{ .cpu_arch = .wasm32, .os_tag = .freestanding }),
         .optimize = optimize,
     });
+    wasm.entry = .disabled;
+    wasm.rdynamic = true;
 
     const exe = b.addExecutable(.{
         .name = "zdraw",
