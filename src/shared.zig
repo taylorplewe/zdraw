@@ -8,10 +8,10 @@ pub const MouseButton = enum {
     None,
 };
 pub const Pixel = packed struct {
-    a: u8,
-    b: u8,
-    g: u8,
     r: u8,
+    g: u8,
+    b: u8,
+    a: u8,
 };
 pub const Point = struct {
     x: isize,

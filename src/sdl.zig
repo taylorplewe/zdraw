@@ -20,7 +20,7 @@ pub fn init(width: usize, height: usize) void {
     const c_height: c_int = @intCast(height);
     window = c.SDL_CreateWindow("zdraw", c_width * shared.SCALE, c_height * shared.SCALE, c.SDL_WINDOW_MOUSE_CAPTURE).?;
     renderer = c.SDL_CreateRenderer(window, null).?;
-    surface = c.SDL_CreateSurface(c_width, c_height, c.SDL_PIXELFORMAT_ABGR32);
+    surface = c.SDL_CreateSurface(c_width, c_height, c.SDL_PIXELFORMAT_RGBA32);
 
     _ = c.SDL_CaptureMouse(true);
     _ = c.SDL_HideCursor();
