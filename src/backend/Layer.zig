@@ -1,5 +1,5 @@
 const std = @import("std");
-const shared = @import("shared.zig");
+const shared = @import("../shared.zig");
 const min = shared.min;
 const max = shared.max;
 const Self = @This();

@@ -4,11 +4,26 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const wasm = b.addExecutable(.{
-        .name = "zdraw-wasm",
-        .root_source_file = .{ .cwd_relative = "src/wasm_exports.zig" },
+    const shared_mod = b.addModule("shared-mod", .{
+        .root_source_file = b.path("src/shared.zig"),
+        .optimize = optimize,
+    });
+
+    const wasm_mod = b.addModule("zdraw-wasm-mod", .{
+        .root_source_file = .{ .cwd_relative = "src/frontend/wasm.zig" },
         .target = b.resolveTargetQuery(.{ .cpu_arch = .wasm32, .os_tag = .freestanding }),
         .optimize = optimize,
+        .imports = &.{
+            .{
+                .name = "shared",
+                .module = shared_mod,
+            },
+        },
+    });
+
+    const wasm = b.addExecutable(.{
+        .name = "zdraw-wasm",
+        .root_module = wasm_mod,
     });
     wasm.entry = .disabled;
     wasm.rdynamic = true;

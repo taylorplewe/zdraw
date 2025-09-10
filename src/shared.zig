@@ -1,3 +1,6 @@
+pub const input_events = @import("./input_events.zig");
+pub const draw = @import("backend/draw.zig");
+
 pub const SCALE = 5;
 pub const BPP = 32;
 pub const BPP8 = BPP / 8;

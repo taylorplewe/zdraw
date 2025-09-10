@@ -1,7 +1,7 @@
 const std = @import("std");
-const draw = @import("draw.zig");
-const input_events = @import("input_events.zig");
-const shared = @import("shared.zig");
+const shared = @import("shared");
+const draw = shared.draw;
+const input_events = shared.input_events;
 
 const WIDTH = 128;
 const HEIGHT = 128;
