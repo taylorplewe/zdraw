@@ -42,3 +42,11 @@ Requirements:
 zig build -Dwasm
 ```
 This will also run `tsc`, transpiling any TypeScript files to JavaScript.
+
+---
+
+To build both frontends, simply run
+```fish
+zig build
+```
+With any of the above build commands, append `-Doptimize=ReleaseSmall` for an optimized release build.
