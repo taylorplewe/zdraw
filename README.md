@@ -24,7 +24,7 @@ You have the option to build one or both of the frontends.
 ### Native (SDL3)
 Requirements:
 - [Zig](https://ziglang.org/) 0.14.x
-- [SDL development headers](https://github.com/libsdl-org/SDL/releases) (the one I used on Windows was `SDL3-devel-3.2.18-VC`)
+- [SDL3 development headers and DLLs](https://github.com/libsdl-org/SDL/releases) (the one I used on Windows was `SDL3-devel-3.2.18-VC`)
 
 ```fish
 zig build -Dnative
