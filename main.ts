@@ -97,7 +97,7 @@ document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.key === 'z') {
     e.preventDefault();
     wasmInstance.update_program_event(ProgramEvent.Undo);
-  } else if (e.ctrlKey && e.shiftKey && e.key === 'z') {
+  } else if (e.ctrlKey && e.key === 'Z') {
     e.preventDefault();
     wasmInstance.update_program_event(ProgramEvent.Redo);
   }
