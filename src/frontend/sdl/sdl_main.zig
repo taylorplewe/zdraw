@@ -1,8 +1,8 @@
 const std = @import("std");
-const shared = @import("shared.zig");
-const input_events = @import("input_events.zig");
-const draw = @import("backend/draw.zig");
-const sdl = @import("frontend/sdl.zig");
+const shared = @import("shared");
+const input_events = shared.input_events;
+const draw = shared.draw;
+const sdl = @import("sdl.zig");
 
 pub const SCREEN_WIDTH = 128;
 pub const SCREEN_HEIGHT = SCREEN_WIDTH;

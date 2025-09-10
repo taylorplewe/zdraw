@@ -1,5 +1,5 @@
-const shared = @import("../shared.zig");
-const input_events = @import("../input_events.zig");
+const shared = @import("shared");
+const input_events = shared.input_events;
 const c = @cImport({
     @cInclude("SDL3/SDL.h");
 });
