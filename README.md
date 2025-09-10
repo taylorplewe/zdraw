@@ -11,7 +11,7 @@ You can see the WebAssembly one at https://tplewe.com/zdraw.
 
 ### Build instructions
 Requirements:
-- [Zig](https://ziglang.org/)
+- [Zig](https://ziglang.org/) 0.14.0 or later
 - for the _native_ frontend, [SDL development headers](https://github.com/libsdl-org/SDL/releases) (the one I used on Windows was `SDL3-devel-3.2.18-VC`)
 - for the _WebAssembly_ frontend, TypeScript
 
