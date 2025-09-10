@@ -93,6 +93,8 @@ canvas.addEventListener('wheel', (e) => {
   wasmInstance.update_mouse_wheel(delta);
 });
 
+canvas.addEventListener('contextmenu', (e) => e.preventDefault()); // 83% caniuse as of 9/9/25
+
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.key === 'z') {
     e.preventDefault();
