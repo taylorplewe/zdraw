@@ -29,7 +29,7 @@ Requirements:
 ```fish
 zig build -Dnative
 ```
-By default, it searches for your SDL3 lib and include directories in your `%LIB%` and `%INCLUDE%` enviornment variables, respectively. If you wish to manually provide the paths to these directories, build with
+By default, it searches for your SDL3 lib and include directories in your `%LIB%` and `%INCLUDE%` environment variables, respectively. If you wish to manually provide the paths to these directories, build with
 ```fish
 zig build -Dnative -Dinclude-path="path/to/sdl3/include" -Dlib-path="path/to/sdl3/lib"
 ```
