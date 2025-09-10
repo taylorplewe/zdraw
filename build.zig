@@ -16,6 +16,9 @@ pub fn build(b: *std.Build) void {
     });
 
     if (should_build_wasm) {
+        const tsc_step = b.addSystemCommand(&[_][]const u8{
+            "tsc",
+        });
         const wasm_mod = b.addModule("zdraw-wasm-mod", .{
             .root_source_file = .{ .cwd_relative = "src/frontend/wasm/wasm.zig" },
             .target = b.resolveTargetQuery(.{ .cpu_arch = .wasm32, .os_tag = .freestanding }),
@@ -33,6 +36,7 @@ pub fn build(b: *std.Build) void {
         });
         wasm.entry = .disabled;
         wasm.rdynamic = true;
+        wasm.step.dependOn(&tsc_step.step);
         b.installArtifact(wasm);
     }
 
