@@ -112,10 +112,10 @@ pub fn update(event: ?input_events.InputEvent) []shared.Pixel {
 /// Set all pixels in a slice to be all 0s
 inline fn clearLayer(layer_pixels: []shared.Pixel) void {
     @memset(layer_pixels, shared.Pixel{
-        .a = 0, // transparent
-        .b = 0,
-        .g = 0,
         .r = 0,
+        .g = 0,
+        .b = 0,
+        .a = 0, // transparent
     });
 }
 
