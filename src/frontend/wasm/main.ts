@@ -29,7 +29,7 @@ let wasmInstance: ZdrawExports;
 let pixelsPtr: number;
 
 async function loadWasm() {
-  const response = await fetch('zig-out/bin/zdraw-wasm.wasm');
+  const response = await fetch('zig-out/bin/zdraw.wasm');
   const buffer = await response.arrayBuffer();
   const { instance } = await WebAssembly.instantiate(buffer);
   wasmInstance = instance.exports as ZdrawExports;

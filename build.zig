@@ -31,7 +31,7 @@ pub fn build(b: *std.Build) void {
             },
         });
         const wasm = b.addExecutable(.{
-            .name = "zdraw-wasm",
+            .name = "zdraw",
             .root_module = wasm_mod,
         });
         wasm.entry = .disabled;
@@ -56,10 +56,19 @@ pub fn build(b: *std.Build) void {
             .name = "zdraw",
             .root_module = native_mod,
         });
-        native.addIncludePath(.{ .cwd_relative = "C:\\Users\\TaylorPlewe\\Documents\\SDL3-devel-3.2.18-VC\\SDL3-3.2.18\\include\\" });
-        native.addLibraryPath(.{ .cwd_relative = "C:\\Users\\TaylorPlewe\\lib" });
+
+        // include paths to SDL3
+        const include_path_option = b.option([]const u8, "include-path", "Path to SDL3 include directory; will use %INCLUDE% if not provided");
+        const lib_path_option = b.option([]const u8, "lib-path", "Path to SDL3 lib directory; will use %LIB% if not provided");
+        var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+        defer arena.deinit();
+        const include_path = if (include_path_option == null) std.process.getEnvVarOwned(arena.allocator(), "INCLUDE") catch "" else include_path_option.?;
+        const lib_path = if (lib_path_option == null) std.process.getEnvVarOwned(arena.allocator(), "LIB") catch "" else lib_path_option.?;
+        native.addIncludePath(.{ .cwd_relative = include_path });
+        native.addLibraryPath(.{ .cwd_relative = lib_path });
         native.linkSystemLibrary("SDL3");
         native.linkLibC();
+
         b.installArtifact(native);
     }
 }
