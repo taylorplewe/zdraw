@@ -7,20 +7,27 @@
   <style>
     body {
       display: flex;
+      flex-direction: column;
+      gap: 8px;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
-      background: #303030;
+      background: #333;
     }
     canvas {
-      border: 1px solid #000;
+      border-radius: 4px;
       cursor: none;
+    }
+    footer, a {
+      font-style: italic;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
   <canvas width="640" height="640"></canvas>
-  <script src="src/frontend/main.js"></script>
+  <footer>2025 Taylor Plewe | <a href="https://github.com/taylorplewe/zdraw">source code</a></footer>
 </body>
+<script src="src/frontend/main.js"></script>
 </html>
